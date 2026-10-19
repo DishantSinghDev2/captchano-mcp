@@ -50,6 +50,13 @@
           "isSecret": false,
           "format": "string",
           "default": "https://api.captchano.com"
+        },
+        {
+          "name": "CAPTCHANO_TOOL_TIMEOUT",
+          "description": "Max seconds per solve_captcha call before it returns a resumable 'solving' result (default 50).",
+          "isRequired": false,
+          "isSecret": false,
+          "format": "number"
         }
       ]
     }

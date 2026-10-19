@@ -1,6 +1,12 @@
 export const DEFAULT_API_BASE = "https://api.captchano.com";
-export const DEFAULT_WAIT_SECONDS = 60;
+export const DEFAULT_WAIT_SECONDS = 45;
 export const MAX_WAIT_SECONDS = 120;
+/**
+ * Total seconds one solve_captcha call may take before it returns a resumable
+ * "solving" result. Many MCP clients time tool calls out at 60 s, so stay under it.
+ */
+export const DEFAULT_TOOL_TIMEOUT_SECONDS = 50;
+export const MAX_TOOL_TIMEOUT_SECONDS = 600;
 
 export interface Config {
   /** CaptchaNo API key (starts with `cn-`). Never logged, never returned to the client. */
@@ -11,6 +17,8 @@ export interface Config {
   waitSeconds: number;
   /** Optional per-process spend ceiling in USD. `undefined` means unlimited. */
   maxSpendUsd: number | undefined;
+  /** Upper bound for one solve_captcha call, seconds (wait + polling). */
+  toolTimeoutSeconds: number;
 }
 
 export class ConfigError extends Error {
@@ -73,5 +81,17 @@ export function loadConfig(env: Env = process.env): Config {
     maxSpendUsd = n;
   }
 
-  return { apiKey, apiBase, waitSeconds, maxSpendUsd };
+  let toolTimeoutSeconds = DEFAULT_TOOL_TIMEOUT_SECONDS;
+  const rawTimeout = optional(env, "CAPTCHANO_TOOL_TIMEOUT");
+  if (rawTimeout) {
+    const n = Number(rawTimeout);
+    if (!Number.isFinite(n) || n < 10) {
+      throw new ConfigError(`CAPTCHANO_TOOL_TIMEOUT must be a number of seconds between 10 and ${MAX_TOOL_TIMEOUT_SECONDS}, got: ${rawTimeout}`);
+    }
+    toolTimeoutSeconds = Math.min(Math.floor(n), MAX_TOOL_TIMEOUT_SECONDS);
+  }
+  // The API wait can never exceed the tool budget.
+  waitSeconds = Math.min(waitSeconds, toolTimeoutSeconds);
+
+  return { apiKey, apiBase, waitSeconds, maxSpendUsd, toolTimeoutSeconds };
 }

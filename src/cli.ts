@@ -11,7 +11,8 @@ Usage:
 Environment:
   CAPTCHANO_API_KEY        required, your CaptchaNo key (cn-...)
   CAPTCHANO_API_BASE       optional, default https://api.captchano.com
-  CAPTCHANO_WAIT           optional, seconds the API blocks per solve (1-120, default 60)
+  CAPTCHANO_WAIT           optional, seconds the API blocks per solve (1-120, default 45)
+  CAPTCHANO_TOOL_TIMEOUT   optional, max seconds per solve_captcha call (10-600, default 50)
   CAPTCHANO_MAX_SPEND_USD  optional, stop solving once this process has spent this much
   CAPTCHANO_MCP_HTTP_TOKEN optional, require "Authorization: Bearer <token>" in --http mode
   CAPTCHANO_LOG_LEVEL      optional, debug | info | warn | error | silent (stderr only)

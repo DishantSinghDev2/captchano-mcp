@@ -82,9 +82,14 @@ test("loadConfig: key required, defaults, caps and validation", () => {
   assert.throws(() => loadConfig({ CAPTCHANO_API_KEY: "  " }), /CAPTCHANO_API_KEY is not set/);
   const c = loadConfig({ CAPTCHANO_API_KEY: "cn-abc" });
   assert.equal(c.apiBase, "https://api.captchano.com");
-  assert.equal(c.waitSeconds, 60);
+  assert.equal(c.waitSeconds, 45);
+  assert.equal(c.toolTimeoutSeconds, 50);
   assert.equal(c.maxSpendUsd, undefined);
-  assert.equal(loadConfig({ CAPTCHANO_API_KEY: "cn-abc", CAPTCHANO_WAIT: "500" }).waitSeconds, 120);
+  // wait is capped by the API max and then by the tool budget
+  assert.equal(loadConfig({ CAPTCHANO_API_KEY: "cn-abc", CAPTCHANO_WAIT: "500" }).waitSeconds, 50);
+  assert.equal(loadConfig({ CAPTCHANO_API_KEY: "cn-abc", CAPTCHANO_WAIT: "500", CAPTCHANO_TOOL_TIMEOUT: "300" }).waitSeconds, 120);
+  assert.equal(loadConfig({ CAPTCHANO_API_KEY: "cn-abc", CAPTCHANO_TOOL_TIMEOUT: "9999" }).toolTimeoutSeconds, 600);
+  assert.throws(() => loadConfig({ CAPTCHANO_API_KEY: "cn-abc", CAPTCHANO_TOOL_TIMEOUT: "5" }), ConfigError);
   assert.equal(loadConfig({ CAPTCHANO_API_KEY: "cn-abc", CAPTCHANO_API_BASE: "https://x.example/" }).apiBase, "https://x.example");
   assert.equal(loadConfig({ CAPTCHANO_API_KEY: "cn-abc", CAPTCHANO_MAX_SPEND_USD: "2.5" }).maxSpendUsd, 2.5);
   assert.equal(loadConfig({ CAPTCHANO_API_KEY: "cn-abc", CAPTCHANO_MAX_SPEND_USD: "${user_config.max_spend_usd}" }).maxSpendUsd, undefined);

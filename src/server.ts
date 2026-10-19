@@ -22,7 +22,7 @@ export interface ServerDeps {
 export function createDeps(config: Config, client?: CaptchaNoClient): ServerDeps {
   return {
     config,
-    client: client ?? new CaptchaNoClient({ apiKey: config.apiKey, apiBase: config.apiBase }),
+    client: client ?? new CaptchaNoClient({ apiKey: config.apiKey, apiBase: config.apiBase, maxTotalMs: config.toolTimeoutSeconds * 1000 }),
     budget: new Budget(config.maxSpendUsd),
     pendingTaskIds: new Set<string>(),
   };
@@ -171,7 +171,9 @@ function taskStructured(task: Task, deps: ServerDeps): z.infer<typeof taskOutput
   if (task.cost !== undefined && task.cost !== null) out.cost = String(task.cost);
   if (task.billedFrom) out.billedFrom = task.billedFrom;
   if (task.solveTime !== undefined && task.solveTime !== null) out.solveTime = task.solveTime;
-  if (task.createdAt) out.createdAt = task.createdAt;
+  if (task.createdAt != null) {
+    out.createdAt = typeof task.createdAt === "number" ? new Date(task.createdAt).toISOString() : task.createdAt;
+  }
   if (task.error) out.error = { code: task.error.code, message: task.error.message, hint: hintFor(task.error.code) };
   out.sessionSpend = deps.budget.summary();
   return out;
@@ -312,7 +314,7 @@ export function createServer(deps: ServerDeps): McpServer {
 Use when an authorised browser or HTTP automation is blocked by reCAPTCHA (v2, v3, Enterprise), Cloudflare Turnstile, DataDome or an image captcha.
 Before calling: identify the type and read the sitekey from the page (call list_captcha_types for where to find it and which fields each type needs).
 Required: recaptcha_* and turnstile → url + sitekey; datadome → url + challengeUrl + proxy; image → body (base64).
-Waits for the result (up to ~120 s, polling automatically). If it is still solving at the end, it returns the task id: call get_task with it instead of solving again.
+Waits for the result (up to ~50 s by default, polling automatically). If it is still solving at the end, it returns the task id: call get_task with it instead of solving again.
 Each successful solve is billed to the CaptchaNo balance (cost is returned); failed solves are free. Do not call repeatedly for the same captcha: one token is valid for one submission and expires in about 2 minutes, so use it right away.`,
       inputSchema: solveInputSchema,
       outputSchema: taskOutputSchema,

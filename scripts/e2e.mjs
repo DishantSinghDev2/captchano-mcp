@@ -115,7 +115,12 @@ async function liveCheck() {
   const transport = new StdioClientTransport({
     command: process.execPath,
     args: [entry],
-    env: { ...getDefaultEnvironment(), CAPTCHANO_API_KEY: key, CAPTCHANO_MAX_SPEND_USD: "0.05" },
+    env: {
+      ...getDefaultEnvironment(),
+      CAPTCHANO_API_KEY: key,
+      CAPTCHANO_MAX_SPEND_USD: "0.05",
+      ...(process.env.CAPTCHANO_API_BASE ? { CAPTCHANO_API_BASE: process.env.CAPTCHANO_API_BASE } : {}),
+    },
     stderr: "ignore",
   });
   const client = new Client({ name: "captchano-e2e-live", version: "1.0.0" });

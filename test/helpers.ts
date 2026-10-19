@@ -58,6 +58,7 @@ export function makeDeps(fetch: FetchLike, opts: { maxSpendUsd?: number; waitSec
     apiKey: FAKE_KEY,
     apiBase: "https://api.example.test",
     waitSeconds: opts.waitSeconds ?? 60,
+    toolTimeoutSeconds: 120,
     maxSpendUsd: opts.maxSpendUsd,
   };
   const clock = opts.clock ?? fakeClock();
@@ -77,10 +78,10 @@ export const READY = (id = "t_1", extra: Record<string, unknown> = {}) => ({
   solution: { token: "03AFcWeA-token" },
   cost: "0.00285",
   solveTime: 12.4,
-  createdAt: "2026-10-19T10:00:00Z",
+  createdAt: 1792404000000,
   ...extra,
 });
 
-export const SOLVING = (id = "t_1") => ({ id, type: "recaptcha_v2", status: "solving", createdAt: "2026-10-19T10:00:00Z" });
+export const SOLVING = (id = "t_1") => ({ id, type: "recaptcha_v2", status: "solving", createdAt: 1792404000000 });
 
 export const V2_ARGS = { type: "recaptcha_v2" as const, url: "https://example.com/login", sitekey: "6Lc_example_sitekey" };

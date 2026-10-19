@@ -116,7 +116,8 @@ argument.
 | --- | --- | --- | --- |
 | `CAPTCHANO_API_KEY` | yes | – | Your API key (`cn-...`). |
 | `CAPTCHANO_MAX_SPEND_USD` | no | unlimited | Spend ceiling for this server process, in USD. See [Budget](#budget). |
-| `CAPTCHANO_WAIT` | no | `60` | Seconds the API blocks on each solve request (`?wait=N`, max 120) before the server switches to polling. |
+| `CAPTCHANO_WAIT` | no | `45` | Seconds the API blocks on each solve request (`?wait=N`, max 120) before the server switches to polling. |
+| `CAPTCHANO_TOOL_TIMEOUT` | no | `50` | Max seconds one `solve_captcha` call takes before returning a resumable `solving` result. Many MCP clients cancel tool calls at 60 s; raise this only if yours allows longer. |
 | `CAPTCHANO_API_BASE` | no | `https://api.captchano.com` | API base URL. |
 | `CAPTCHANO_MCP_HTTP_TOKEN` | no | – | In `--http` mode, require `Authorization: Bearer <token>` on `/mcp`. |
 | `CAPTCHANO_LOG_LEVEL` | no | `info` | `debug`, `info`, `warn`, `error` or `silent`. Logs go to stderr only. |
@@ -142,7 +143,7 @@ Solves a captcha and returns the value the page needs. Billed per successful sol
 | `userAgent` | all except image | The User-Agent of the client that will use the solution |
 
 How a call runs: the server sends `POST /v1/solve?wait=N`. If the API answers `202` (still
-solving), the server polls `GET /v1/task/{id}` every 5 seconds, for up to 120 seconds in total.
+solving), the server polls `GET /v1/task/{id}` every 5 seconds, for up to 50 seconds in total by default (`CAPTCHANO_TOOL_TIMEOUT`).
 If the task is still solving after that, the result has `status: "solving"` and the task id, and
 the agent should call `get_task` with that id rather than solving again.
 

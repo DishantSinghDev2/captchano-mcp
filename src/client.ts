@@ -21,7 +21,8 @@ export interface Task {
   cost?: string;
   billedFrom?: string;
   solveTime?: number | string;
-  createdAt?: string;
+  /** Unix epoch milliseconds, as the API returns it. */
+  createdAt?: number | string;
 }
 
 export interface Balance {
