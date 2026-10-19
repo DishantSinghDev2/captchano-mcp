@@ -1,0 +1,13 @@
+src/
+test/
+scripts/
+build-test/
+Dockerfile
+.dockerignore
+glama.json
+server.json
+tsconfig*.json
+*.tgz
+*.mcpb
+.env
+.env.*

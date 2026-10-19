@@ -1,0 +1,57 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.DishantSinghDev2/captchano-mcp",
+  "title": "CaptchaNo",
+  "description": "Solve reCAPTCHA v2/v3/Enterprise, Turnstile, DataDome and image captchas from AI agents.",
+  "version": "1.0.0",
+  "websiteUrl": "https://captchano.com/agents/mcp",
+  "repository": {
+    "url": "https://github.com/DishantSinghDev2/captchano-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "captchano-mcp",
+      "version": "1.0.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CAPTCHANO_API_KEY",
+          "description": "Your CaptchaNo API key (starts with cn-). Create one at https://captchano.com/dashboard",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string",
+          "placeholder": "cn-..."
+        },
+        {
+          "name": "CAPTCHANO_MAX_SPEND_USD",
+          "description": "Optional spend ceiling in USD for one server process; solves are refused once it is reached.",
+          "isRequired": false,
+          "isSecret": false,
+          "format": "number"
+        },
+        {
+          "name": "CAPTCHANO_WAIT",
+          "description": "Optional seconds the API blocks per solve before polling takes over (1-120).",
+          "isRequired": false,
+          "isSecret": false,
+          "format": "number",
+          "default": "60"
+        },
+        {
+          "name": "CAPTCHANO_API_BASE",
+          "description": "Optional API base URL.",
+          "isRequired": false,
+          "isSecret": false,
+          "format": "string",
+          "default": "https://api.captchano.com"
+        }
+      ]
+    }
+  ]
+}

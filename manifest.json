@@ -1,0 +1,61 @@
+{
+  "manifest_version": "0.3",
+  "name": "captchano-mcp",
+  "display_name": "CaptchaNo",
+  "version": "1.0.0",
+  "description": "Solve reCAPTCHA v2/v3/Enterprise, Cloudflare Turnstile, DataDome and image captchas from AI agents.",
+  "long_description": "CaptchaNo MCP server. Gives agents four tools: solve_captcha, get_task, get_balance and list_captcha_types. Solves run on CaptchaNo's own solving infrastructure and are billed to your CaptchaNo balance; failed solves are never billed. Use only on sites you are authorised to automate.",
+  "author": {
+    "name": "DishIs Technologies LLC",
+    "email": "support@captchano.com",
+    "url": "https://captchano.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DishantSinghDev2/captchano-mcp.git"
+  },
+  "homepage": "https://captchano.com/agents/mcp",
+  "documentation": "https://captchano.com/captcha-solver-api",
+  "support": "https://github.com/DishantSinghDev2/captchano-mcp/issues",
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "CAPTCHANO_API_KEY": "${user_config.api_key}",
+        "CAPTCHANO_MAX_SPEND_USD": "${user_config.max_spend_usd}"
+      }
+    }
+  },
+  "tools": [
+    { "name": "solve_captcha", "description": "Solve a reCAPTCHA, Turnstile, DataDome or image captcha and return the token, cookie or text." },
+    { "name": "get_task", "description": "Fetch the status and solution of a solve task by id." },
+    { "name": "get_balance", "description": "Show the CaptchaNo balance and this session's spend." },
+    { "name": "list_captcha_types", "description": "List supported captcha types, their fields and how to find the sitekey." }
+  ],
+  "keywords": ["captcha", "recaptcha", "turnstile", "datadome", "automation"],
+  "license": "MIT",
+  "privacy_policies": ["https://captchano.com/privacy"],
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": { "node": ">=20.3.0" }
+  },
+  "user_config": {
+    "api_key": {
+      "type": "string",
+      "title": "CaptchaNo API key",
+      "description": "Your CaptchaNo API key (starts with cn-). Create one at https://captchano.com/dashboard",
+      "sensitive": true,
+      "required": true
+    },
+    "max_spend_usd": {
+      "type": "string",
+      "title": "Spend limit (USD, optional)",
+      "description": "Stop solving once this session has spent this many US dollars. Leave empty for no limit.",
+      "required": false,
+      "default": ""
+    }
+  }
+}
